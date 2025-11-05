@@ -1,6 +1,9 @@
 
 
 function test() {
-    
-  document.getElementById("demoText").innerHTML = "hatar livet";
+    const p = document.getElementById('demoText');
+    if (p) {
+        p.textContent = 'Testing fungerade';
+    }
+    console.log('test() called');
 }
