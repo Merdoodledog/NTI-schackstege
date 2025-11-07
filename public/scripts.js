@@ -245,13 +245,11 @@ if ([...users].length === 0) {
   
 
     if (enabled) {
-    btn.title = 'Mörkt läge';
-    btn.src = 'assets/Mörkt.png';
+      btn.title = 'Mörkt läge';
     }
     else {
       btn.title = 'Ljust läge';
-      btn.src = 'assets/Ljust.png';
-   }
+    }
   }
 
 
