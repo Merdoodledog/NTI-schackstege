@@ -198,3 +198,50 @@ body{
 .entry-left{display:flex;gap:12px;align-items:center}
 .entry-name{font-weight:600}
 .entry-stats{font-size:13px;color:var(--muted)}
+
+.icon-btn{
+  margin-left:12px;
+  background:transparent;
+  border:0;
+  color:var(--muted);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px;
+  min-width:40px;
+  min-height:40px;
+  border-radius:8px;        
+  cursor:pointer;
+  transition:background .15s ease, transform .15s ease;
+  font-size:16px;
+
+}
+.icon-btn:hover{ background: rgba(255,255,255,0.03); transform: translateY(-1px); }
+
+/* menu button uses same sizing */
+.menu-btn{
+  position: absolute;
+  right: 16px;      /* align to right corner of header */
+  top: 12px;        /* move down a bit */
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .15s ease, transform .15s ease;
+  z-index: 20;
+}
+.menu-btn:hover{ background: rgba(255,255,255,0.03); transform: translateY(-1px); }
+
+/* global invert mode — toggled by the button */
+.inverted{
+  filter: invert(1) hue-rotate(180deg);
+  transition: filter 200ms ease;
+  /* ensure fixed-position UI (popups etc.) invert with page as well */
+}
