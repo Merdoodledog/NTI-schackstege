@@ -68,7 +68,6 @@ function renderPodium(podiumArr) {
     } else {
       card.innerHTML = `<div class="place-badge">${places[i]}</div><div class="player-name muted">—</div>`;
     }
-
     podiumEl.appendChild(card);
   }
 }
@@ -79,38 +78,15 @@ function renderLeaderboard(list) {
     return;
   }
   leaderboardEntries.innerHTML = '';
-
-  // list is the players after the top 3, so ranks start at 4
-  for (let i = 0; i < list.length; i++) {
-    const item = list[i];
-    const rank = 4 + i;
-
+  for (const item of list) {
     const el = document.createElement('div');
     el.className = 'leaderboard-entry';
-
     const left = document.createElement('div');
     left.className = 'entry-left';
-
-    const rankEl = document.createElement('div');
-    rankEl.className = 'entry-rank';
-    rankEl.textContent = rank;
-
-    const nameEl = document.createElement('div');
-    nameEl.className = 'entry-name';
-    nameEl.innerHTML = escapeHtml(shortenName(item.name, 6));
-
-    const statsEl = document.createElement('div');
-    statsEl.className = 'entry-stats';
-    statsEl.textContent = `Wins: ${item.wins} · Losses: ${item.losses} · Draws: ${item.draws}`;
-
-    left.appendChild(rankEl);
-    left.appendChild(nameEl);
-    left.appendChild(statsEl);
-
+    left.innerHTML = `<div class="entry-name">${escapeHtml(item.name)}</div><div class="entry-stats">Wins: ${item.wins} · Losses: ${item.losses} · Draws: ${item.draws}</div>`;
     const right = document.createElement('div');
     right.className = 'entry-right';
     right.innerHTML = `<div class="entry-stats">Games: ${item.games}${item.lastGame ? ' · last: '+(new Date(item.lastGame)).toLocaleString() : ''}</div>`;
-
     el.appendChild(left);
     el.appendChild(right);
     leaderboardEntries.appendChild(el);
@@ -133,29 +109,36 @@ function shortenName(name) {
   return s.slice(0, visible) + '…';
 }
 
+
 refreshData();
 
-// Site-wide color invert toggle (persists choice)
+//ändrar mellan light mode och dark mode
 (() => {
-  const KEY = 'nti_inverted_v1';
+  const STORAGE_INVERT = 'nti_inverted_v1';
   const btn = document.getElementById('invert-btn');
+  if (!btn) return;
 
-  function setInverted(enabled) {
-    document.documentElement.classList.toggle('inverted', Boolean(enabled));
-    if (btn) {
-      btn.setAttribute('aria-pressed', String(Boolean(enabled)));
-      btn.title = enabled ? 'Mörkt läge' : 'Ljust läge';
+  function setInverted(enabled){
+    document.documentElement.classList.toggle('inverted', enabled);
+    btn.setAttribute('aria-pressed', String(Boolean(enabled)));
+    localStorage.setItem(STORAGE_INVERT, enabled ? '1' : '0');
+  
+
+    if (enabled) {
+      btn.title = 'Mörkt läge';
     }
-    try { localStorage.setItem(KEY, enabled ? '1' : '0'); } catch {}
+    else {
+      btn.title = 'Ljust läge';
+    }
   }
 
-  // initialise from storage
-  try {
-    const stored = localStorage.getItem(KEY);
-    setInverted(stored === '1');
-  } catch { setInverted(false); }
 
-  // expose toggle for other code and attach to button if present
-  window.toggleInvert = () => setInverted(!document.documentElement.classList.contains('inverted'));
-  btn?.addEventListener('click', (e) => { e.preventDefault(); window.toggleInvert(); });
+  const stored = localStorage.getItem(STORAGE_INVERT);
+  if (stored === '1') setInverted(true);
+  else setInverted(false);
+
+  btn.addEventListener('click', () => {
+    const active = document.documentElement.classList.contains('inverted');
+    setInverted(!active);
+  });
 })();
