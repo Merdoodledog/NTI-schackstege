@@ -57,6 +57,58 @@ body{
   letter-spacing: 0.02em;
 }
 
+.icon-btn{
+  margin-left:12px;
+  background:transparent;
+  border:0;
+  color:var(--muted);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px;
+  min-width:40px;
+  min-height:40px;
+  border-radius:8px;        
+  cursor:pointer;
+  transition:background .15s ease, transform .15s ease;
+  font-size:16px;
+  transform: translateY(5px);
+
+
+}
+.icon-btn:hover{ background: rgba(255,255,255,0.03); transform: translateY(-1px); }
+
+.menu-btn{
+  margin-left:12px;
+  background:transparent;
+  border:0;
+  color:var(--muted);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px;
+  min-width:40px;
+  min-height:40px;
+  border-radius:8px;
+  cursor:pointer;
+  transition:background .15s ease, transform .15s ease;
+  
+}
+.menu-btn:hover{ background: rgba(255,255,255,0.03); transform: translateY(-1px); }
+
+html {
+  transition: filter 220ms ease, background-color 220ms ease, color 220ms ease;
+}
+
+.inverted{
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* make images/svg smoothly revert when invert toggles */
+img, svg, video {
+  transition: filter 220ms ease;
+}
+
 /* Thin top/bottom page borders similar to screenshot */
 .page-border{
   height:70px;
@@ -198,3 +250,4 @@ body{
 .entry-left{display:flex;gap:12px;align-items:center}
 .entry-name{font-weight:600}
 .entry-stats{font-size:13px;color:var(--muted)}
+

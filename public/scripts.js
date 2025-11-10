@@ -99,5 +99,40 @@ function escapeHtml(s){
 }
 
 // Init
-refreshData();
-window.__nti_refresh = refreshData;
+loadUsers();
+if ([...users].length === 0) {
+  renderEmpty();
+} else {
+  refreshData();
+}
+
+//ändrar mellan light mode och dark mode
+(() => {
+  const STORAGE_INVERT = 'nti_inverted_v1';
+  const btn = document.getElementById('invert-btn');
+  if (!btn) return;
+
+  function setInverted(enabled){
+    document.documentElement.classList.toggle('inverted', enabled);
+    btn.setAttribute('aria-pressed', String(Boolean(enabled)));
+    localStorage.setItem(STORAGE_INVERT, enabled ? '1' : '0');
+  
+
+    if (enabled) {
+      btn.title = 'Mörkt läge';
+    }
+    else {
+      btn.title = 'Ljust läge';
+    }
+  }
+
+
+  const stored = localStorage.getItem(STORAGE_INVERT);
+  if (stored === '1') setInverted(true);
+  else setInverted(false);
+
+  btn.addEventListener('click', () => {
+    const active = document.documentElement.classList.contains('inverted');
+    setInverted(!active);
+  });
+})();
