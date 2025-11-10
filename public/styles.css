@@ -257,21 +257,6 @@ img, svg, video {
   box-shadow: 0 6px 18px rgba(0,0,0,0.24);
 }
 
-.podium .place-badge.rank-1 {
-  background: linear-gradient(135deg, #ffd700 0%, #ffcf33 100%); /* gold */
-  color:  #000000;
-}
-
-.podium .place-badge.rank-2 {
-  background: linear-gradient(135deg, #e6e6e6 0%, #cfcfcf 100%); /* silver */
-  color: #000000;
-}
-
-.podium .place-badge.rank-3 {
-  background: linear-gradient(135deg, #cd7f32 0%, #a65b2b 10%); /* bronze */
-  color:  #000000;
-}
-
 .player-name{font-weight:600}
 .player-stats{color:var(--muted);font-size:13px}
 

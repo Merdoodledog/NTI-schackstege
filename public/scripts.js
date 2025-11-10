@@ -62,16 +62,12 @@ function renderPodium(podiumArr) {
     card.className = 'podium-card';
     if (data) {
       card.innerHTML = `<div class="place-badge">${places[i]}</div><div>
-        <div class="player-name">${escapeHtml(shortenName(data.name, 6))}</div>
+        <div class="player-name">${escapeHtml(truncateName(data.name, 6))}</div>
         <div class="player-stats">Wins: ${data.wins} · Games: ${data.games}</div>
       </div>`;
     } else {
       card.innerHTML = `<div class="place-badge">${places[i]}</div><div class="player-name muted">—</div>`;
     }
-
-    // add rank-* class to the badge so CSS variants (rank-1, rank-2, rank-3) apply
-    const badge = card.querySelector('.place-badge');
-    if (badge) badge.classList.add(`rank-${i+1}`);
 
     podiumEl.appendChild(card);
   }
@@ -132,8 +128,8 @@ function escapeHtml(s){
 function shortenName(name) {
   if (!name) return '';
   const s = String(name);
-  if (s.length <= 8) return s;
-  const visible = Math.max(0, 8);
+  if (s.length <= 10) return s;
+  const visible = Math.max(0, 10);
   return s.slice(0, visible) + '…';
 }
 
