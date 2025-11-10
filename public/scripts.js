@@ -135,41 +135,29 @@ function shortenName(name) {
   return s.slice(0, visible) + '…';
 }
 
-// Init
-loadUsers();
-if ([...users].length === 0) {
-  renderEmpty();
-} else {
   refreshData();
-}
 
-//ändrar mellan light mode och dark mode
+// Site-wide color invert toggle (persists choice)
 (() => {
-  const STORAGE_INVERT = 'nti_inverted_v1';
+  const KEY = 'nti_inverted_v1';
   const btn = document.getElementById('invert-btn');
-  if (!btn) return;
 
-  function setInverted(enabled){
-    document.documentElement.classList.toggle('inverted', enabled);
-    btn.setAttribute('aria-pressed', String(Boolean(enabled)));
-    localStorage.setItem(STORAGE_INVERT, enabled ? '1' : '0');
-  
-
-    if (enabled) {
-      btn.title = 'Mörkt läge';
+  function setInverted(enabled) {
+    document.documentElement.classList.toggle('inverted', Boolean(enabled));
+    if (btn) {
+      btn.setAttribute('aria-pressed', String(Boolean(enabled)));
+      btn.title = enabled ? 'Mörkt läge' : 'Ljust läge';
     }
-    else {
-      btn.title = 'Ljust läge';
-    }
+    try { localStorage.setItem(KEY, enabled ? '1' : '0'); } catch {}
   }
 
+  // initialise from storage
+  try {
+    const stored = localStorage.getItem(KEY);
+    setInverted(stored === '1');
+  } catch { setInverted(false); }
 
-  const stored = localStorage.getItem(STORAGE_INVERT);
-  if (stored === '1') setInverted(true);
-  else setInverted(false);
-
-  btn.addEventListener('click', () => {
-    const active = document.documentElement.classList.contains('inverted');
-    setInverted(!active);
-  });
+  // expose toggle for other code and attach to button if present
+  window.toggleInvert = () => setInverted(!document.documentElement.classList.contains('inverted'));
+  btn?.addEventListener('click', (e) => { e.preventDefault(); window.toggleInvert(); });
 })();
