@@ -160,7 +160,7 @@ async function fetchAndStoreGames() {
 }
 
 // Run fetchAndStoreGames every 5 minutes
-setInterval(fetchAndStoreGames, 5 * 60 * 1000);
+setInterval(fetchAndStoreGames, 5 * 1000);
 fetchAndStoreGames(); // initial run
 
 app.listen(PORT, () => console.log(`Server listening on http://localhost:${PORT}`));
