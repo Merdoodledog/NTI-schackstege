@@ -1,37 +1,144 @@
 const express = require('express');
 const fetch = require('node-fetch');
 const path = require('path');
+const pool = require('./db');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 30032;
+app.use(express.json());
 
 // serve public client files
 app.use(express.static(path.join(__dirname, '..', 'public')));
-// serve assets folder as well (keeps existing assets in repo root)
 app.use('/assets', express.static(path.join(__dirname, '..', 'assets')));
 
-// Simple proxy for Lichess games export to avoid CORS issues from client
-app.get('/api/games/user/:username', async (req, res) => {
+// Register a user
+app.post('/api/users', async (req, res) => {
+  const username = (req.body.username || '').trim().toLowerCase();
+  if (!username) return res.status(400).json({ error: 'Missing username' });
   try {
-    const username = req.params.username;
-    const qs = new URLSearchParams(req.query).toString();
-    const lichessUrl = `https://lichess.org/api/games/user/${encodeURIComponent(username)}${qs ? '?' + qs : ''}`;
-
-    const headers = { Accept: 'application/x-ndjson' };
-    const token = req.get('x-token') || req.get('authorization');
-    if (token) {
-      if (/^\s*bearer\s+/i.test(token)) headers['Authorization'] = token;
-      else headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    const r = await fetch(lichessUrl, { headers });
-    const text = await r.text();
-    res.set('Content-Type', r.headers.get('content-type') || 'text/plain');
-    res.status(r.status).send(text);
+    const conn = await pool.getConnection();
+    await conn.query(`CREATE TABLE IF NOT EXISTS users (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      username VARCHAR(64) NOT NULL UNIQUE,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
+    await conn.query('INSERT IGNORE INTO users (username) VALUES (?)', [username]);
+    conn.release();
+    res.json({ ok: true });
   } catch (e) {
-    console.error(e);
-    res.status(500).send('Proxy error');
+    res.status(500).json({ error: 'DB error' });
   }
 });
+
+// Get leaderboard and podium
+app.get('/api/leaderboard', async (req, res) => {
+  try {
+    const conn = await pool.getConnection();
+    await conn.query(`CREATE TABLE IF NOT EXISTS games (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      white VARCHAR(64) NOT NULL,
+      black VARCHAR(64) NOT NULL,
+      result VARCHAR(16),
+      date DATETIME,
+      lichess_id VARCHAR(32),
+      raw_json TEXT
+    )`);
+    const [userRows] = await conn.query('SELECT username FROM users');
+    const users = userRows.map(u => u.username);
+    if (users.length === 0) {
+      conn.release();
+      return res.json({ podium: [], leaderboard: [] });
+    }
+    const stats = {};
+    for (const u of users) stats[u] = { name: u, games: 0, wins: 0, losses: 0, draws: 0, lastGame: null };
+    const [gameRows] = await conn.query('SELECT * FROM games');
+    for (const g of gameRows) {
+      const white = (g.white || '').toLowerCase();
+      const black = (g.black || '').toLowerCase();
+      if (!stats[white] || !stats[black]) continue;
+      stats[white].games += 1;
+      stats[black].games += 1;
+      if (g.date) {
+        if (!stats[white].lastGame || g.date > stats[white].lastGame) stats[white].lastGame = g.date;
+        if (!stats[black].lastGame || g.date > stats[black].lastGame) stats[black].lastGame = g.date;
+      }
+      if (g.result === '1-0') {
+        stats[white].wins += 1;
+        stats[black].losses += 1;
+      } else if (g.result === '0-1') {
+        stats[black].wins += 1;
+        stats[white].losses += 1;
+      } else {
+        stats[white].draws += 1;
+        stats[black].draws += 1;
+      }
+    }
+    conn.release();
+    const statArr = Object.values(stats);
+    statArr.sort((a, b) => (b.wins - a.wins) || (b.games - a.games) || a.name.localeCompare(b.name));
+    const podium = statArr.slice(0, 3);
+    const leaderboard = statArr.slice(3);
+    res.json({ podium, leaderboard });
+  } catch (e) {
+    res.status(500).json({ error: 'DB error' });
+  }
+});
+
+// Periodically fetch games for all users from Lichess and store in DB
+
+async function fetchAndStoreGames() {
+  try {
+    const conn = await pool.getConnection();
+    await conn.query(`CREATE TABLE IF NOT EXISTS users (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      username VARCHAR(64) NOT NULL UNIQUE,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
+    await conn.query(`CREATE TABLE IF NOT EXISTS games (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      white VARCHAR(64) NOT NULL,
+      black VARCHAR(64) NOT NULL,
+      result VARCHAR(16),
+      date DATETIME,
+      lichess_id VARCHAR(32),
+      raw_json TEXT
+    )`);
+    const [userRows] = await conn.query('SELECT username FROM users');
+    const users = userRows.map(u => u.username);
+    for (const username of users) {
+      const url = `https://lichess.org/api/games/user/${encodeURIComponent(username)}?max=50&opening=true&moves=false`;
+      try {
+        const res = await fetch(url, { headers: { Accept: 'application/x-ndjson' } });
+        if (!res.ok) continue;
+        const text = await res.text();
+        const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+        for (const line of lines) {
+          try {
+            const obj = JSON.parse(line);
+            const white = (obj.players && obj.players.white && obj.players.white.user && obj.players.white.user.name) || (obj.players && obj.players.white && obj.players.white.userId) || obj.white || null;
+            const black = (obj.players && obj.players.black && obj.players.black.user && obj.players.black.user.name) || (obj.players && obj.players.black && obj.players.black.userId) || obj.black || null;
+            const result = obj.status || obj.winner || obj.result || (obj.pgn && (obj.pgn.includes('1-0') ? '1-0' : (obj.pgn.includes('0-1') ? '0-1' : '1/2-1/2')));
+            const date = obj.createdAt || obj.time || null;
+            const lichess_id = obj.id || obj.gameId || null;
+            if (!white || !black) continue;
+            if (!users.includes(white.toLowerCase()) || !users.includes(black.toLowerCase())) continue;
+            // Deduplicate by lichess_id
+            if (lichess_id) {
+              const [existsRows] = await conn.query('SELECT 1 FROM games WHERE lichess_id = ?', [lichess_id]);
+              if (existsRows.length > 0) continue;
+            }
+            await conn.query('INSERT INTO games (white, black, result, date, lichess_id, raw_json) VALUES (?, ?, ?, ?, ?, ?)',
+              [white, black, result, date ? new Date(date).toISOString().slice(0, 19).replace('T', ' ') : null, lichess_id, JSON.stringify(obj)]);
+          } catch (e) {}
+        }
+      } catch (e) {}
+    }
+    conn.release();
+  } catch (e) {}
+}
+
+// Run fetchAndStoreGames every 5 minutes
+setInterval(fetchAndStoreGames, 5 * 60 * 1000);
+fetchAndStoreGames(); // initial run
 
 app.listen(PORT, () => console.log(`Server listening on http://localhost:${PORT}`));
