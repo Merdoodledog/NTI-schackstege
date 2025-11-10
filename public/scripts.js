@@ -19,7 +19,9 @@ signupForm.addEventListener('submit', async e => {
   refreshData();
 });
 
+
 refreshBtn.addEventListener('click', () => refreshData());
+
 
 async function fetchLeaderboard() {
   const res = await fetch('/api/leaderboard');
@@ -98,13 +100,7 @@ function escapeHtml(s){
   }[c]));
 }
 
-// Init
-loadUsers();
-if ([...users].length === 0) {
-  renderEmpty();
-} else {
-  refreshData();
-}
+refreshData();
 
 //ändrar mellan light mode och dark mode
 (() => {
