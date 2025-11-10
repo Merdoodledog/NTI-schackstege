@@ -186,12 +186,17 @@ function renderPodium(podiumArr) {
     card.className = 'podium-card';
     if (data) {
       card.innerHTML = `<div class="place-badge">${places[i]}</div><div>
-        <div class="player-name">${escapeHtml(data.name)}</div>
+        <div class="player-name">${escapeHtml(shortenName(data.name, 6))}</div>
         <div class="player-stats">Wins: ${data.wins} · Games: ${data.games}</div>
       </div>`;
     } else {
       card.innerHTML = `<div class="place-badge">${places[i]}</div><div class="player-name muted">—</div>`;
     }
+
+    // add rank-* class to the badge so CSS variants (rank-1, rank-2, rank-3) apply
+    const badge = card.querySelector('.place-badge');
+    if (badge) badge.classList.add(`rank-${i+1}`);
+
     podiumEl.appendChild(card);
   }
 }
@@ -202,15 +207,38 @@ function renderLeaderboard(list) {
     return;
   }
   leaderboardEntries.innerHTML = '';
-  for (const item of list) {
+
+  // list is the players after the top 3, so ranks start at 4
+  for (let i = 0; i < list.length; i++) {
+    const item = list[i];
+    const rank = 4 + i;
+
     const el = document.createElement('div');
     el.className = 'leaderboard-entry';
+
     const left = document.createElement('div');
     left.className = 'entry-left';
-    left.innerHTML = `<div class="entry-name">${escapeHtml(item.name)}</div><div class="entry-stats">Wins: ${item.wins} · Losses: ${item.losses} · Draws: ${item.draws}</div>`;
+
+    const rankEl = document.createElement('div');
+    rankEl.className = 'entry-rank';
+    rankEl.textContent = rank;
+
+    const nameEl = document.createElement('div');
+    nameEl.className = 'entry-name';
+    nameEl.innerHTML = escapeHtml(shortenName(item.name, 6));
+
+    const statsEl = document.createElement('div');
+    statsEl.className = 'entry-stats';
+    statsEl.textContent = `Wins: ${item.wins} · Losses: ${item.losses} · Draws: ${item.draws}`;
+
+    left.appendChild(rankEl);
+    left.appendChild(nameEl);
+    left.appendChild(statsEl);
+
     const right = document.createElement('div');
     right.className = 'entry-right';
     right.innerHTML = `<div class="entry-stats">Games: ${item.games}${item.lastGame ? ' · last: '+(new Date(item.lastGame)).toLocaleString() : ''}</div>`;
+
     el.appendChild(left);
     el.appendChild(right);
     leaderboardEntries.appendChild(el);
@@ -222,6 +250,15 @@ function escapeHtml(s){
   return String(s).replace(/[&<>\"']/g, c=>({
     '&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":"&#39;"
   }[c]));
+}
+
+/* sätter ett max antal bokstäver som visas i leaderboarden för användarnamnen */
+function shortenName(name) {
+  if (!name) return '';
+  const s = String(name);
+  if (s.length <= 8) return s;
+  const visible = Math.max(0, 8);
+  return s.slice(0, visible) + '…';
 }
 
 // Init

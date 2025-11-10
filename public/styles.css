@@ -74,7 +74,6 @@ body{
   font-size:16px;
   transform: translateY(5px);
 
-
 }
 .icon-btn:hover{ background: rgba(255,255,255,0.03); transform: translateY(-1px); }
 
@@ -234,6 +233,37 @@ img, svg, video {
 .podium-list{display:flex;flex-direction:column;gap:10px}
 .podium-card{display:flex;align-items:center;gap:12px;padding:10px;border-radius:6px;background:linear-gradient(180deg, rgba(84,71,107,0.06), rgba(0,0,0,0.06));}
 .place-badge{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:var(--muted);background:rgba(84,71,107,0.18)}
+
+/* podium place badges — base styles */
+.podium .place-badge {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 13px;
+  color: #000000;
+  border: 1px solid rgba(0,0,0,0.12);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.24);
+}
+
+.podium .place-badge.rank-1 {
+  background: linear-gradient(135deg, #ffd700 0%, #ffcf33 100%); /* gold */
+  color:  #000000;
+}
+
+.podium .place-badge.rank-2 {
+  background: linear-gradient(135deg, #e6e6e6 0%, #cfcfcf 100%); /* silver */
+  color: #000000;
+}
+
+.podium .place-badge.rank-3 {
+  background: linear-gradient(135deg, #cd7f32 0%, #a65b2b 10%); /* bronze */
+  color:  #000000;
+}
+
 .player-name{font-weight:600}
 .player-stats{color:var(--muted);font-size:13px}
 
@@ -247,6 +277,24 @@ img, svg, video {
 
 .leaderboard-entries{display:flex;flex-direction:column;gap:8px;overflow:auto;padding:6px}
 .leaderboard-entry{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:6px;background:rgba(255,255,255,0.01);border:1px solid rgba(84,71,107,0.06)}
+
+/* rank badge */
+.entry-rank{
+  width:28px;
+  height:28px;
+  min-width:28px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-weight:700;
+  color:var(--muted);
+  background: rgba(133, 91, 206, 0.12);
+  flex:0 0 28px;
+  margin-right:8px;
+  font-size:12px;
+  line-height:1;
+}
+
 .entry-left{display:flex;gap:12px;align-items:center}
 .entry-name{font-weight:600}
 .entry-stats{font-size:13px;color:var(--muted)}
