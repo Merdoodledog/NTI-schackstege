@@ -62,7 +62,7 @@ function renderPodium(podiumArr) {
     card.className = 'podium-card';
     if (data) {
       card.innerHTML = `<div class="place-badge">${places[i]}</div><div>
-        <div class="player-name">${escapeHtml(truncateName(data.name, 6))}</div>
+        <div class="player-name">${escapeHtml(shortenName(data.name, 6))}</div>
         <div class="player-stats">Wins: ${data.wins} · Games: ${data.games}</div>
       </div>`;
     } else {
