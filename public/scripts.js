@@ -93,11 +93,20 @@ function renderLeaderboard(list) {
     leaderboardEntries.appendChild(el);
   }
 }
+
 function renderChallengers(list) {
   if (!list || list.length === 0) {
     challengerEntries.innerHTML = '<p class="muted">No challengers available.</p>';
     return;
   }
+  challengerEntries.innerHTML = '';
+  for (const item of list) {
+    const el = document.createElement('div');
+    el.className = 'challenger-entry';
+    el.innerHTML = `<div class="challenger-name">${escapeHtml(item.name)}</div>
+                    <div class="challenger-stats">Wins: ${item.wins} · Losses: ${item.losses} · Draws: ${item.draws} · Games: ${item.games}</div>`;
+  challengerEntries.appendChild(el);
+}}
 
 
 function escapeHtml(s){
@@ -147,4 +156,6 @@ refreshData();
     const active = document.documentElement.classList.contains('inverted');
     setInverted(!active);
   });
-})()};
+})();
+
+
