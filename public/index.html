@@ -7,24 +7,16 @@
     <title>NTI Schackstege</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-
     <header class="main-header">
         <img class="logo" src="../assets/mango.png" alt="NTI - Logga">
         <h1 class="site-title">Schackstege</h1>
-
         <!-- invert colours -->
-        
         <button id="invert-btn" class="icon-btn" aria-pressed="false" title="Invert colours">
           <img class="invert-img" src="../assets/LDplaceholder.png" alt="Change Theme"></img>
         </button>
-        
-
     </header>
-
     <div class="page-border top"></div>
-
     <main class="container">
         <aside class="podium" aria-label="Top 3 podium">
             <div class="podium-inner">
@@ -34,29 +26,23 @@
                 </div>
             </div>
         </aside>
-
         <section class="leaderboard-frame" aria-label="Chess leaderboard">
             <div class="leaderboard-inner">
-                <h2 class="leaderboard-title">Chess Leaderboard</h2>
-
+                <h2 class="leaderboard-title">Schackstegen</h2>
                 <form id="signup-form" class="signup-form" title="Add a Lichess username">
                     <input id="username-input" placeholder="Add Lichess username (e.g. magnuscarlsen)" required>
                     <button type="submit">Add</button>
                 </form>
-
                 <div class="controls">
                     <button id="refresh-btn">Refresh</button>
                 </div>
-
                 <div class="leaderboard-entries" id="leaderboard-entries">
                     <!-- Leaderboard entries rendered here -->
                 </div>
             </div>
         </section>
     </main>
-
     <div class="page-border bottom"></div>
-
     <script src="scripts.js" defer></script>
 </body>
 </html>

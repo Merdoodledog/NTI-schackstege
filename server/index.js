@@ -159,7 +159,7 @@ async function fetchAndStoreGames() {
   } catch (e) {}
 }
 
-// Run fetchAndStoreGames every 5 minutes
+// Run fetchAndStoreGames every 5 seconds
 setInterval(fetchAndStoreGames, 5 * 1000);
 fetchAndStoreGames(); // initial run
 
