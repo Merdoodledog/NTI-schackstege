@@ -3,6 +3,7 @@
 const usernameInput = document.getElementById('username-input');
 const signupForm = document.getElementById('signup-form');
 const leaderboardEntries = document.getElementById('leaderboard-entries');
+const challengerEntries = document.getElementById('challenger-entries');
 const podiumEl = document.getElementById('podium');
 const refreshBtn = document.getElementById('refresh-btn');
 
@@ -92,6 +93,12 @@ function renderLeaderboard(list) {
     leaderboardEntries.appendChild(el);
   }
 }
+function renderChallengers(list) {
+  if (!list || list.length === 0) {
+    challengerEntries.innerHTML = '<p class="muted">No challengers available.</p>';
+    return;
+  }
+
 
 function escapeHtml(s){
   if (!s) return '';
@@ -140,4 +147,4 @@ refreshData();
     const active = document.documentElement.classList.contains('inverted');
     setInverted(!active);
   });
-})();
+})()};

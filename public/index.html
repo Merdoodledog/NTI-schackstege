@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div class="page-border top"></div>
     <header class="main-header">
         <img class="logo" src="../assets/mango.png" alt="NTI - Logga">
         <h1 class="site-title">Schackstege</h1>
@@ -15,8 +16,9 @@
         <button id="invert-btn" class="icon-btn" aria-pressed="false" title="Invert colours">
           <img class="invert-img" src="../assets/LDplaceholder.png" alt="Change Theme"></img>
         </button>
+
     </header>
-    <div class="page-border top"></div>
+    
     <main class="container">
         <aside class="podium" aria-label="Top 3 podium">
             <div class="podium-inner">
@@ -38,6 +40,15 @@
                 </div>
                 <div class="leaderboard-entries" id="leaderboard-entries">
                     <!-- Leaderboard entries rendered here -->
+                </div>
+            </div>
+        </section>
+         <section class="challenger-frame" aria-label="Challengers">
+            <div class="challenger-inner">
+                <h2 class="challengers-title">Available Challengers</h2>
+                <div class="challenger-entries" id="challenger-entries">
+                    <!-- Challenger entries rendered here -->
+
                 </div>
             </div>
         </section>

@@ -118,7 +118,7 @@ img, svg, video {
 
 /* Thin top/bottom page borders similar to screenshot */
 .page-border{
-  height:70px;
+  height:8%;
   background: rgba(52, 39, 80, 0.25);
   border:none;
   box-shadow:none;
@@ -179,6 +179,39 @@ img, svg, video {
   border-radius:2px;
 }
 
+.challenger-frame{
+  width:min(50vw, 520px);
+  height:min(65vh,620px);
+  padding:10px;
+  display:flex;
+  align-items:stretch;
+  justify-content:center;
+  background:transparent;
+}
+
+.challenger-inner{
+  width:100%;
+  height:100%;
+  padding:18px;
+  border-radius:6px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 6px 20px rgba(59, 38, 95, 0.726);
+}
+
+
+.challengers-title{
+  color:var(--panel-border);
+  margin:0 auto 6px auto;
+  font-weight:600;
+  font-size:18px;
+}
+
+.challenger-entries{display:flex;flex-direction:column;gap:8px;overflow:auto;padding:6px}
+
 .muted{color:var(--muted);font-size:14px}
 
 /* Responsive tweaks */
@@ -194,6 +227,10 @@ img, svg, video {
     justify-content:flex-start;
     gap:18px;
     padding:20px;
+
+    .challenger-frame{width:92vw;height:70vh;border-width:2px}
+    .challengers-title{font-size:16px}
+    .podium{width:75vw}
   }
 
   /* place podium above leaderboard */
