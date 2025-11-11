@@ -132,7 +132,6 @@ refreshData();
     }
   }
 
-
   const stored = localStorage.getItem(STORAGE_INVERT);
   if (stored === '1') setInverted(true);
   else setInverted(false);
