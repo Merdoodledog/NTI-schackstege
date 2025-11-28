@@ -11,7 +11,7 @@ signupForm.addEventListener('submit', async e => {
   e.preventDefault();
   const name = usernameInput.value.trim();
   if (!name) return;
-  await fetch('/api/users', {
+  await fetch('/api.php/users', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username: name })
@@ -25,7 +25,7 @@ refreshBtn.addEventListener('click', () => refreshData());
 
 
 async function fetchLeaderboard() {
-  const res = await fetch('/api/leaderboard');
+  const res = await fetch('/api.php/leaderboard');
   if (!res.ok) return { podium: [], leaderboard: [] };
   return await res.json();
 }
